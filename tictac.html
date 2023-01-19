@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <script>
+      control = 0;
+      const gameBoard = (function () {
+        const array = [];
+        for (i = 0; i < 9; i++) {
+          array.push("");
+        }
+        return { array };
+      })();
+      const player = function (znak, broj) {
+        const marking = () => {
+          return znak;
+        };
+        const increase = () => {
+          control = broj;
+        };
+        return { marking, increase };
+      };
+      player1 = player("X", 1);
+      player2 = player("O", 2);
+
+      const flow = (function () {
+        const position = (pozicija) => {
+          if ((control = 1)) {
+            pozicija = player1.marking();
+          } else {
+            pozicija = player2.marking();
+          }
+        };
+        return { position };
+      })();
+    </script>
+  </body>
+</html>
