@@ -8,8 +8,19 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
+    <div class="kocke">
+      <div id="0"></div>
+      <div id="1"></div>
+      <div id="2"></div>
+      <div id="3"></div>
+      <div id="4"></div>
+      <div id="5"></div>
+      <div id="6"></div>
+      <div id="7"></div>
+      <div id="8"></div>
+    </div>
     <script>
-      control = 0;
+      control = 1;
       const gameBoard = (function () {
         const array = [];
         for (i = 0; i < 9; i++) {
@@ -29,16 +40,36 @@
       player1 = player("X", 1);
       player2 = player("O", 2);
 
-      const flow = (function () {
-        const position = (pozicija) => {
-          if ((control = 1)) {
-            pozicija = player1.marking();
-          } else {
-            pozicija = player2.marking();
+      const flow = function (niz, pozicija) {
+        const position = () => {
+          if (control == 1) {
+            niz[pozicija] = player1.marking();
+            control = 2;
+          } else if (control == 2) {
+            niz[pozicija] = player2.marking();
+            control = 1;
           }
         };
         return { position };
-      })();
+      };
+      const divv = document.querySelectorAll("div > div");
+
+      const render = function () {
+        for (i = 0; i < 9; i++) {
+          divv.forEach((div) => {
+            if (div.getAttribute("id") == `${i}`) {
+              div.textContent = gameBoard.array[i];
+            }
+          });
+        }
+      };
+      divv.forEach((div) => {
+        div.addEventListener("click", () => {
+          flow2 = flow(gameBoard.array, div.getAttribute("id"));
+          flow2.position();
+          render();
+        });
+      });
     </script>
   </body>
 </html>
