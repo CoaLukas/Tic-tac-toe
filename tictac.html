@@ -9,22 +9,25 @@
   </head>
   <body>
     <div class="kocke">
-      <div id="0"></div>
-      <div id="1"></div>
-      <div id="2"></div>
-      <div id="3"></div>
-      <div id="4"></div>
-      <div id="5"></div>
-      <div id="6"></div>
-      <div id="7"></div>
-      <div id="8"></div>
+      <div id="a0" data-row="0" data-column="0"></div>
+      <div id="1" data-row="0" data-column="1"></div>
+      <div id="2" data-row="0" data-column="2"></div>
+      <div id="3" data-row="1" data-column="0"></div>
+      <div id="4" data-row="1" data-column="1"></div>
+      <div id="5" data-row="1" data-column="2"></div>
+      <div id="6" data-row="2" data-column="0"></div>
+      <div id="7" data-row="2" data-column="1"></div>
+      <div id="8" data-row="2" data-column="2"></div>
     </div>
     <script>
       control = 1;
+
       const gameBoard = (function () {
-        const array = [];
-        for (i = 0; i < 9; i++) {
-          array.push("");
+        const array = [[], [], []];
+        for (i = 0; i < 3; i++) {
+          for (a = 0; a < 3; a++) {
+            array[i].push("");
+          }
         }
         return { array };
       })();
@@ -40,34 +43,132 @@
       player1 = player("X", 1);
       player2 = player("O", 2);
 
-      const flow = function (niz, pozicija) {
+      const flow = function (niz, red, kolona) {
         const position = () => {
           if (control == 1) {
-            niz[pozicija] = player1.marking();
+            niz[red][kolona] = player1.marking();
             control = 2;
           } else if (control == 2) {
-            niz[pozicija] = player2.marking();
+            niz[red][kolona] = player2.marking();
             control = 1;
           }
         };
-        return { position };
+
+        const winCheck = (clicked) => {
+          const secondCheck = () => {
+            let arry = [];
+            for (i = 0; i < 3; i++) {
+              arry.push(
+                gameBoard.array[i][clicked.getAttribute("data-column")]
+              );
+            }
+            if (
+              arry.every((araj) => {
+                return araj == player1.marking();
+              }) ||
+              arry.every((araj) => {
+                return araj == player2.marking();
+              })
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+          };
+          let arry = [];
+          for (i = 0; i < 3; i++) {
+            arry.push(gameBoard.array[i][i]);
+          }
+          console.log(arry);
+          const thirdCheck = () => {
+            let arry = [];
+            for (i = 0; i < 3; i++) {
+              arry.push(gameBoard.array[i][i]);
+            }
+            let arry2 = [];
+            let a = 2;
+            for (i = 0; i < 3; i++) {
+              arry2.push(gameBoard.array[i][a]);
+              a--;
+            }
+            if (
+              arry.every((araj) => {
+                return araj == player1.marking();
+              }) ||
+              arry.every((araj) => {
+                return araj == player2.marking();
+              }) ||
+              arry2.every((araj) => {
+                return araj == player1.marking();
+              }) ||
+              arry2.every((araj) => {
+                return araj == player2.marking();
+              })
+            ) {
+              return true;
+            } else {
+              return false;
+            }
+          };
+
+          const checker = function () {
+            if (
+              gameBoard.array.some((araj) => {
+                return (
+                  araj.every((arajj) => {
+                    if (arajj == player1.marking()) {
+                      console.log("if1");
+                      return true;
+                    }
+                  }) ||
+                  araj.every((arajjj) => {
+                    if (arajjj == player2.marking()) {
+                      console.log("if2");
+                      return true;
+                    }
+                  })
+                );
+              }) ||
+              secondCheck() ||
+              thirdCheck()
+            ) {
+              return true;
+            }
+          };
+          if (checker() && control == 1) {
+            alert(`player 2 wins! `);
+          } else if (checker() && control == 2) {
+            alert(`player 1 wins! `);
+          }
+        };
+        return { position, winCheck };
       };
       const divv = document.querySelectorAll("div > div");
 
       const render = function () {
-        for (i = 0; i < 9; i++) {
-          divv.forEach((div) => {
-            if (div.getAttribute("id") == `${i}`) {
-              div.textContent = gameBoard.array[i];
-            }
-          });
+        for (i = 0; i < 3; i++) {
+          for (a = 0; a < 3; a++) {
+            divv.forEach((div) => {
+              if (
+                div.getAttribute("data-row") == `${i}` &&
+                div.getAttribute("data-column") == `${a}`
+              ) {
+                div.textContent = gameBoard.array[i][a];
+              }
+            });
+          }
         }
       };
       divv.forEach((div) => {
         div.addEventListener("click", () => {
-          flow2 = flow(gameBoard.array, div.getAttribute("id"));
+          flow2 = flow(
+            gameBoard.array,
+            div.getAttribute("data-row"),
+            div.getAttribute("data-column")
+          );
           flow2.position();
           render();
+          flow2.winCheck(div);
         });
       });
     </script>
