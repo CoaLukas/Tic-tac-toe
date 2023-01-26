@@ -4,6 +4,12 @@ body {
   align-items: center;
   height: 100vh;
 }
+
+.contain {
+  display: flex;
+  flex-direction: column;
+  display: none;
+}
 .kocke {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
@@ -19,4 +25,24 @@ body {
   justify-content: center;
   align-items: center;
   font-size: 100px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 400px;
+  width: 300px;
+  justify-content: space-evenly;
+}
+.container input {
+  width: 100%;
+}
+.visible {
+  display: grid;
+}
+.invisible {
+  display: none;
+}
+.reset {
+  justify-self: center;
+  margin-top: 70px;
 }

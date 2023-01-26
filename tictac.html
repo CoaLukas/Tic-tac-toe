@@ -8,19 +8,48 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="kocke">
-      <div id="a0" data-row="0" data-column="0"></div>
-      <div id="1" data-row="0" data-column="1"></div>
-      <div id="2" data-row="0" data-column="2"></div>
-      <div id="3" data-row="1" data-column="0"></div>
-      <div id="4" data-row="1" data-column="1"></div>
-      <div id="5" data-row="1" data-column="2"></div>
-      <div id="6" data-row="2" data-column="0"></div>
-      <div id="7" data-row="2" data-column="1"></div>
-      <div id="8" data-row="2" data-column="2"></div>
+    <div class="contain">
+      <div class="kocke">
+        <div id="a0" data-row="0" data-column="0"></div>
+        <div id="1" data-row="0" data-column="1"></div>
+        <div id="2" data-row="0" data-column="2"></div>
+        <div id="3" data-row="1" data-column="0"></div>
+        <div id="4" data-row="1" data-column="1"></div>
+        <div id="5" data-row="1" data-column="2"></div>
+        <div id="6" data-row="2" data-column="0"></div>
+        <div id="7" data-row="2" data-column="1"></div>
+        <div id="8" data-row="2" data-column="2"></div>
+      </div>
+      <div class="reset">
+        <button>reset</button>
+      </div>
+    </div>
+    <div class="container">
+      <div>
+        <label for="name1">First player name:</label>
+        <input type="text" id="name1" />
+      </div>
+      <div>
+        <label for="name2">Second player name:</label>
+        <input type="text" id="name2" />
+      </div>
+      <div><button class="dugm">Start!</button></div>
     </div>
     <script>
       control = 1;
+      player1 = null;
+      player2 = null;
+      const dugme = document.querySelector(".dugm");
+      dugme.addEventListener("click", () => {
+        const input1 = document.querySelector("#name1");
+        const input2 = document.querySelector("#name1");
+        player1 = player("X", 1, input1.value);
+        player2 = player("O", 2, input2.value);
+        const kockice = document.querySelector(".contain");
+        const cont = document.querySelector(".container");
+        kockice.classList.add("visible");
+        cont.classList.add("invisible");
+      });
 
       const gameBoard = (function () {
         const array = [[], [], []];
@@ -31,19 +60,34 @@
         }
         return { array };
       })();
-      const player = function (znak, broj) {
+      const player = function (znak, broj, ime) {
         const marking = () => {
           return znak;
         };
         const increase = () => {
           control = broj;
         };
-        return { marking, increase };
+        const name = () => {
+          return ime;
+        };
+        return { marking, increase, name };
       };
-      player1 = player("X", 1);
-      player2 = player("O", 2);
 
       const flow = function (niz, red, kolona) {
+        const render = function () {
+          for (i = 0; i < 3; i++) {
+            for (a = 0; a < 3; a++) {
+              divv.forEach((div) => {
+                if (
+                  div.getAttribute("data-row") == `${i}` &&
+                  div.getAttribute("data-column") == `${a}`
+                ) {
+                  div.textContent = gameBoard.array[i][a];
+                }
+              });
+            }
+          }
+        };
         const position = () => {
           if (control == 1) {
             niz[red][kolona] = player1.marking();
@@ -136,39 +180,56 @@
             }
           };
           if (checker() && control == 1) {
-            alert(`player 2 wins! `);
+            alert(`${player2.name()} wins! `);
+            control = 3;
           } else if (checker() && control == 2) {
-            alert(`player 1 wins! `);
+            alert(`${player1.name()} wins! `);
+            control = 3;
+          } else if (
+            gameBoard.array.every((araj) => {
+              return araj.every((arajj) => {
+                if (arajj == "X" || arajj == "O") {
+                  return true;
+                } else {
+                  return false;
+                }
+              });
+            })
+          ) {
+            alert("draw!");
+            control = 3;
           }
         };
-        return { position, winCheck };
+        return { position, winCheck, render };
       };
       const divv = document.querySelectorAll("div > div");
-
-      const render = function () {
-        for (i = 0; i < 3; i++) {
-          for (a = 0; a < 3; a++) {
-            divv.forEach((div) => {
-              if (
-                div.getAttribute("data-row") == `${i}` &&
-                div.getAttribute("data-column") == `${a}`
-              ) {
-                div.textContent = gameBoard.array[i][a];
-              }
-            });
-          }
-        }
-      };
+      const reset = document.querySelector(".reset");
       divv.forEach((div) => {
-        div.addEventListener("click", () => {
+        div.addEventListener("click", function ispis() {
           flow2 = flow(
             gameBoard.array,
             div.getAttribute("data-row"),
             div.getAttribute("data-column")
           );
           flow2.position();
-          render();
+          flow2.render();
           flow2.winCheck(div);
+        });
+      });
+      reset.addEventListener("click", () => {
+        for (i = 0; i < 3; i++) {
+          for (a = 0; a < 3; a++) {
+            gameBoard.array[i][a] = "";
+          }
+        }
+        divv.forEach((div) => {
+          flow2 = flow(
+            gameBoard.array,
+            div.getAttribute("data-row"),
+            div.getAttribute("data-column")
+          );
+          flow2.render();
+          control = 1;
         });
       });
     </script>
